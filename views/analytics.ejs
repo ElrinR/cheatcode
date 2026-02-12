@@ -1,0 +1,71 @@
+<%- include('header') %>
+
+<div class="page-container">
+  <h1>Analytics & Reports</h1>
+  <p class="subtitle">System performance and player behavior statistics</p>
+  
+  <div class="analytics-grid">
+    <div class="chart-card">
+      <h3>Player Status Distribution</h3>
+      <div class="simple-chart">
+        <% 
+          const cleanPlayers = players.filter(p => p.status === 'Clean').length;
+          const suspiciousPlayers = players.filter(p => p.status === 'Suspicious').length;
+          const bannedPlayers = players.filter(p => p.status === 'Banned').length;
+        %>
+        <div class="chart-bar">
+          <span class="chart-label">Clean: <%= cleanPlayers %></span>
+          <div class="bar" style="width: <%= (cleanPlayers/players.length)*100 %>%; background: #10b981;"></div>
+        </div>
+        <div class="chart-bar">
+          <span class="chart-label">Suspicious: <%= suspiciousPlayers %></span>
+          <div class="bar" style="width: <%= (suspiciousPlayers/players.length)*100 %>%; background: #f59e0b;"></div>
+        </div>
+        <div class="chart-bar">
+          <span class="chart-label">Banned: <%= bannedPlayers %></span>
+          <div class="bar" style="width: <%= (bannedPlayers/players.length)*100 %>%; background: #ef4444;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Violation Severity Distribution</h3>
+      <div class="simple-chart">
+        <% 
+          const lowViolations = violations.filter(v => v.severity === 'Low').length;
+          const mediumViolations = violations.filter(v => v.severity === 'Medium' || v.severity === 'High').length;
+          const criticalViolations = violations.filter(v => v.severity === 'Critical').length;
+        %>
+        <div class="chart-bar">
+          <span class="chart-label">Low: <%= lowViolations %></span>
+          <div class="bar" style="width: <%= (lowViolations/violations.length)*100 %>%; background: #3b82f6;"></div>
+        </div>
+        <div class="chart-bar">
+          <span class="chart-label">High: <%= mediumViolations %></span>
+          <div class="bar" style="width: <%= (mediumViolations/violations.length)*100 %>%; background: #f59e0b;"></div>
+        </div>
+        <div class="chart-bar">
+          <span class="chart-label">Critical: <%= criticalViolations %></span>
+          <div class="bar" style="width: <%= (criticalViolations/violations.length)*100 %>%; background: #ef4444;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-summary">
+    <div class="summary-item">
+      <h4>Total Violations</h4>
+      <p><%= violations.length %></p>
+    </div>
+    <div class="summary-item">
+      <h4>Average Suspicion</h4>
+      <p><%= Math.round(players.reduce((sum, p) => sum + p.suspicion, 0) / players.length) %>%</p>
+    </div>
+    <div class="summary-item">
+      <h4>Most Common Violation</h4>
+      <p><%= violations[0]?.type || 'N/A' %></p>
+    </div>
+  </div>
+</div>
+
+<%- include('footer') %>

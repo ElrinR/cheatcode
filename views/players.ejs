@@ -1,0 +1,68 @@
+<%- include('header') %>
+
+<div class="page-container">
+  <h1>Player Management</h1>
+  <p class="subtitle">Monitor and manage player accounts</p>
+  
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Player ID</th>
+          <th>Username</th>
+          <th>Suspicion Score</th>
+          <th>Warnings</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% players.forEach(player => { %>
+          <tr class="status-<%= player.status.toLowerCase() %>">
+            <td>#<%= player.id %></td>
+            <td><strong><%= player.username %></strong></td>
+            <td>
+              <div class="suspicion-bar">
+                <div class="suspicion-fill" style="width: <%= player.suspicion %>%;"></div>
+                <span><%= player.suspicion %>%</span>
+              </div>
+            </td>
+            <td><span class="badge badge-warning"><%= player.warnings %></span></td>
+            <td>
+              <% if (player.status === 'Clean') { %>
+                <span class="badge badge-success">✅ Clean</span>
+              <% } else if (player.status === 'Suspicious') { %>
+                <span class="badge badge-warning">⚠️ Suspicious</span>
+              <% } else { %>
+                <span class="badge badge-danger">🚫 Banned</span>
+              <% } %>
+            </td>
+            <td>
+              <button class="btn-small btn-danger" onclick="banPlayer(<%= player.id %>)">Ban</button>
+              <button class="btn-small btn-info">Details</button>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+function banPlayer(playerId) {
+  if (confirm('Are you sure you want to ban this player?')) {
+    fetch('/api/ban-player', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ playerId })
+    })
+    .then(r => r.json())
+    .then(data => {
+      alert('✅ ' + data.message);
+      location.reload();
+    });
+  }
+}
+</script>
+
+<%- include('footer') %>

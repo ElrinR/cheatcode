@@ -1,0 +1,29 @@
+<%- include('header') %>
+
+<div class="page-container">
+  <h1>Violations Log</h1>
+  <p class="subtitle">All detected cheating violations and incidents</p>
+  
+  <div class="violations-grid">
+    <% violations.forEach(violation => { %>
+      <div class="violation-card severity-<%= violation.severity.toLowerCase() %>">
+        <div class="violation-header">
+          <h3><%= violation.player %></h3>
+          <span class="severity-badge severity-<%= violation.severity.toLowerCase() %>">
+            <%= violation.severity %>
+          </span>
+        </div>
+        
+        <p class="violation-type">🚨 <strong><%= violation.type %></strong></p>
+        <p class="violation-date">📅 <%= violation.date %></p>
+        
+        <div class="violation-actions">
+          <button class="btn-small btn-warning">Investigate</button>
+          <button class="btn-small btn-danger">Report</button>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+</div>
+
+<%- include('footer') %>

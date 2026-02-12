@@ -1,0 +1,72 @@
+<%- include('header') %>
+
+<div class="dashboard-container">
+  <h1>Dashboard</h1>
+  <p class="subtitle">Real-time Anti-Cheat Monitoring System</p>
+  
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div class="stat-icon">👥</div>
+      <h3>Total Players</h3>
+      <p class="stat-number"><%= totalPlayers %></p>
+    </div>
+    
+    <div class="stat-card suspicious">
+      <div class="stat-icon">⚠️</div>
+      <h3>Suspicious Players</h3>
+      <p class="stat-number"><%= suspiciousPlayers %></p>
+    </div>
+    
+    <div class="stat-card violations">
+      <div class="stat-icon">🚨</div>
+      <h3>Recent Violations</h3>
+      <p class="stat-number"><%= recentViolations %></p>
+    </div>
+    
+    <div class="stat-card status">
+      <div class="stat-icon">✅</div>
+      <h3>System Status</h3>
+      <p class="stat-text">ONLINE</p>
+    </div>
+  </div>
+
+  <div class="action-buttons">
+    <button class="btn btn-primary" onclick="window.location.href='/players'">View Players</button>
+    <button class="btn btn-danger" onclick="reportViolation()">Report Violation</button>
+    <button class="btn btn-info" onclick="window.location.href='/analytics'">View Analytics</button>
+  </div>
+
+  <div class="info-box">
+    <h3>🎮 What is AntiCheat Pro?</h3>
+    <p>
+      AntiCheat Pro is a sophisticated player behavior tracking system designed to detect and prevent cheating in online games. 
+      It monitors player behavior, detects suspicious patterns, and helps maintain a fair gaming environment.
+    </p>
+  </div>
+</div>
+
+<script>
+function reportViolation() {
+  const playerName = prompt("Enter player username:");
+  if (!playerName) return;
+  
+  const violationType = prompt("Violation type (e.g., Aim Bot, Speed Hack, Wall Hack):");
+  if (!violationType) return;
+  
+  const severity = prompt("Severity (Low/Medium/High/Critical):");
+  if (!severity) return;
+  
+  fetch('/api/report-violation', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ playerName, violationType, severity })
+  })
+  .then(r => r.json())
+  .then(data => {
+    alert('✅ ' + data.message);
+    location.reload();
+  });
+}
+</script>
+
+<%- include('footer') %>
