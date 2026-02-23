@@ -20,16 +20,31 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Create app directory if it doesn't exist
+            # 1. Install Docker & Docker Compose if missing
+            if ! [ -x "$(command -v docker)" ]; then
+              echo "Installing Docker..."
+              curl -fsSL https://get.docker.com -o get-docker.sh
+              sudo sh get-docker.sh
+              sudo usermod -aG docker ubuntu
+            fi
+            
+            # 2. Setup App Directory
             mkdir -p ~/app
             cd ~/app
             
-            # If repo doesn't exist, clone it; otherwise pull latest
+            # 3. Pull latest code
             if [ ! -d ".git" ]; then
               git clone https://github.com/${{ github.repository }} .
             else
               git pull origin main
             fi
 
-            # Start/Update application using Docker Compose
-            sudo docker-compose up -d --build
+            # 4. Kill anything currently running on port 3000
+            sudo fuser -k 3000/tcp || true
+
+            # 5. Start app with Docker (Try both command variants)
+            if docker compose version > /dev/null 2>&1; then
+              sudo docker compose up -d --build
+            else
+              sudo docker-compose up -d --build
+            fi
